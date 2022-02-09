@@ -13,10 +13,15 @@
 
     <!-- -->
     <!-- Node Type -->
+	<!-- only acceptable values are Device, Node, Feeder, and Transformer -->
     <!-- -->
     <xs:simpleType name="NodeType">
         <xs:restriction base="xs:string">
-            <xs:pattern value="(Bus|Nodal|Device)"/>
+			<!-- <xs:pattern value="(Device | Node | Feeder | Transformer)"/> -->
+			<xs:enumeration value ="Device"/>
+			<xs:enumeration value ="Node"/>
+			<xs:enumeration value ="Feeder"/>
+			<xs:enumeration value ="Transformer"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -44,7 +49,7 @@
         </xs:attribute>
         <xs:attribute name="NodeType" type="NodeType" use="required">
             <xs:annotation>
-                <xs:documentation>Grid node type.</xs:documentation>
+                <xs:documentation>Grid node type. The only acceptable values are Device, Node, Feeder, and Transformer.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
         <xs:attribute name="NodeDescription" type="xs:string" use="optional">

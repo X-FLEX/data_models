@@ -3,8 +3,10 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
     <xs:include schemaLocation="../V1.01/UFTP-V1.01-common.xsd"/>
     <xs:include schemaLocation="../V1.01/UFTP-V1.01-agr-dso.xsd"/>
+	<xs:include schemaLocation="UFTP-V2.00-dso-grid-profile.xsd"/>
 
-    <!-- -->
+
+	<!-- -->
     <!--  Order ISP Divisible Type -->
     <!-- -->
     <xs:simpleType name="OrderISPDivisibleType">
@@ -54,7 +56,338 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <!-- ELEMENT DEFINITIONS -->
+
+
+	<!-- -->
+	<!-- X-FLEX Flex Offer Option ISP Type  -->
+	<!-- -->
+	<xs:complexType name="XFLEXFlexOfferOptionISPType">
+
+		<xs:attribute name="Disposition" type="DispositionType" use="optional" default="Available">
+			<xs:annotation>
+				<xs:documentation>
+					Used only for FlexRequest messages: indication whether the Power specified for this ISP represents available capacity or a request for reduction/increase.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="OrderDirection" type="XFLEXOrderDirectionType" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					Direction of the power in the XFLEXFlexOffer.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="OrderType" type="XFLEXOrderExecutionType" use="optional" default="REGULAR_LIMIT_ORDER">
+			<xs:annotation>
+				<xs:documentation>
+					Order execution type.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="Power" type="xs:positiveInteger" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					Power specified for this ISP in Watts.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Start" type="xs:positiveInteger" use="required">
+			<xs:annotation>
+				<xs:documentation>Number of the first ISPs this element refers to. The first ISP of a day has number 1 and the last ISP of a day has number 96.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Duration" type="xs:positiveInteger" use="optional" default="1">
+			<xs:annotation>
+				<xs:documentation>The number of the ISPs this element represents. Optional, default value is 1.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+	<!-- -->
+	<!-- Disposition -->
+	<!-- -->
+	<xs:simpleType name="DispositionType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Available"/>
+			<xs:enumeration value="Requested"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- -->
+	<!-- XFLEXOrder Direction Type-->
+	<!-- -->
+	<xs:simpleType name="XFLEXOrderDirectionType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="INJECTION"/>
+			<xs:enumeration value="CONSUMPTION"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- -->
+	<!-- XFLEXOrderType Type -->
+	<!-- -->
+	<xs:simpleType name="XFLEXOrderExecutionType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="REGULAR_LIMIT_ORDER"/>
+			<xs:enumeration value="ALL OR NONE"/>
+			<xs:enumeration value="FILL OR KILL"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+
+
+
+
+
+	<!-- -->
+	<!-- X-FLEX Flex Offer Option Type -->
+	<!-- -->
+	<xs:complexType name="XFLEXFlexOfferOptionType">
+		
+		<xs:sequence>
+			<xs:annotation>
+				<xs:documentation>
+					The ISP represents one or more Imbalance Settlement Periods and is used by Prognosis and Flex-related
+					messages.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:element name="ISP" type="XFLEXFlexOfferOptionISPType" maxOccurs="unbounded"/>
+		</xs:sequence>
+		
+		<xs:attribute name="OptionReference" type="UUIDType" use="required">
+			<xs:annotation>
+				<xs:documentation>The identification of this option, i.e. randomly generated UUID.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		
+		<xs:attribute name="Price" type="CurrencyAmountType" use="required">
+			<xs:annotation>
+				<xs:documentation>The asking price for the flexibility offered in this option.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="ProcurementType" type="ProcurementTypeType" default="NEW">
+			<xs:annotation>
+				<xs:documentation>The asking price for the flexibility offered in this option.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		
+		<xs:attribute name="MinActivationFactor" type="ActivationFactorType" use="optional" default="1.00">
+			<xs:annotation>
+				<xs:documentation>
+					The minimal activation factor for this OfferOption. An AGR may choose to include MinActivationFactor in
+					FlexOffers even if the DSO is not interested in partial activation. In that case the DSO will simply use an
+					ActivationFactor of 1.00 in every FlexOrder.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		
+	</xs:complexType>
+
+	<!-- -->
+	<!-- ProcurementType Type -->
+	<!-- -->
+	<xs:simpleType name="ProcurementTypeType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NEW"/>
+			<xs:enumeration value="TRADED"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+
+	<!-- -->
+	<!--  XFLEX Flex Message Type -->
+	<!-- -->
+	<xs:complexType name="XFLEXFlexMessageType" abstract="true">
+		<xs:complexContent>
+			<xs:extension base="XFLEXPayloadMessageType">
+				<xs:attribute name="ISP-Duration" type="xs:duration" use="required">
+					<xs:annotation>
+						<xs:documentation>
+							ISO 8601 time interval (minutes only, for example PT15M) indicating the duration of the ISPs
+							referenced in this message. Although the ISP length is a market-wide fixed value, making this assumption
+							explicit in each message is important for validation purposes, allowing implementations to reject messages with
+							an errant ISP duration.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="TimeZone" type="TimeZoneNameType" use="required">
+					<xs:annotation>
+						<xs:documentation>
+							Time zone ID (as per the IANA time zone database, http://www.iana.org/time-zones, for example:
+							Europe/Amsterdam) indicating the UTC offset that applies to the Period referenced in this message. Although the
+							time zone is a market-wide fixed value, making this assumption explicit in each message is important for
+							validation purposes, allowing implementations to reject messages with an errant UTC offset.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="Period" type="PeriodType" use="required">
+					<xs:annotation>
+						<xs:documentation>Day (in yyyy-mm-dd format) the ISPs referenced in this Flex* message belong to.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				
+				
+				
+			</xs:extension>
+			 
+			
+		</xs:complexContent>
+	</xs:complexType>
+
+
+	<!-- -->
+	<!--  XFLEX Flex Offer Message Type -->
+	<!-- -->
+	<xs:complexType name="XFLEXFlexOfferMessageType" abstract="true">
+		<xs:complexContent>
+			<xs:extension base="XFLEXFlexMessageType">
+				<xs:attributeGroup ref="GridNodeAttrGroup"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	
+
+	<!-- -->
+	<!-- XFLEXFlex Offer Type -->
+	<!-- -->
+	<xs:complexType name="XFLEXFlexOfferType">
+		<xs:complexContent>
+			<xs:extension base="XFLEXFlexOfferMessageType">
+				<xs:sequence>
+					<xs:annotation>
+						<xs:documentation>
+							If the DSO does not support mutually exclusive offers it will reject FlexOffers that contain more
+							than one OfferOption.
+						</xs:documentation>
+					</xs:annotation>
+					<xs:element name="XFLEXOfferOption" type="XFLEXFlexOfferOptionType" minOccurs="1" maxOccurs="unbounded"/>
+				</xs:sequence>
+				<xs:attribute name="ExpirationDateTime" type="xs:dateTime" use="required">
+					<xs:annotation>
+						<xs:documentation>
+							Date and time, including the time zone (ISO 8601 formatted as per
+							http://www.w3.org/TR/NOTE-datetime) until which the XFLEXFlexOffer is valid.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="FlexRequestMessageID" type="UUIDType" use="optional">
+					<xs:annotation>
+						<xs:documentation>MessageID of the FlexRequest message this request is based on.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="ContractID" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation>Reference to the concerning bilateral contract, if applicable.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="D-PrognosisMessageID" type="UUIDType" use="optional">
+					<xs:annotation>
+						<xs:documentation>
+							MessageID of the D-Prognosis this request is based on, if it has been agreed that the baseline is
+							based on D-prognoses.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="BaselineReference" type="xs:string" use="optional">
+					<xs:annotation>
+						<xs:documentation>
+							Identification of the baseline prognosis, if another baseline methodology is used than based on
+							D-prognoses
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="Currency" type="ISO4217CurrencyType" use="required">
+					<xs:annotation>
+						<xs:documentation>
+							ISO 4217 code indicating the currency that applies to the price of the FlexOffer.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+
+	<!-- -->
+	<!-- X-FLEX Market Type -->
+	<!-- -->
+	<xs:simpleType name="XFLEXMarketType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="localDAM"/>
+			<xs:enumeration value="localIDM"/>
+			<xs:enumeration value="localmFRR"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+
+	<!-- -->
+	<!--  XFLEX Payload Message Type -->
+	<!-- -->
+	<xs:complexType name="XFLEXPayloadMessageType" abstract="true">
+		<xs:attribute name="Sender" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					 Name of the sender.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		
+		<xs:attribute name="MarketType" type="XFLEXMarketType" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					Name of the market the bid is sent on.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="MarketID" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					Name of the market, such as "Luce".
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		
+		<xs:attribute name="TimeStamp" type="xs:dateTime" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					Date and time this message was created, including the time zone (ISO 8601 formatted as per
+					http://www.w3.org/TR/NOTE-datetime).
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="MessageID" type="UUIDType" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					Unique identifier (UUID/GUID as per IETF RFC 4122) for this message, to be generated when composing each
+					message.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="ConversationID" type="UUIDType" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					Unique identifier (UUID/GUID as per IETF RFC 4122) used to correlate responses with requests, to be
+					generated when composing the first message in a conversation and subsequently copied from the original message to each
+					reply message.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+
+
+
+
+	<!-- ELEMENT DEFINITIONS -->
+	<xs:element name="XFLEXFlexOffer" type="XFLEXFlexOfferType"/>
+	<xs:element name="XFLEXFlexOfferResponse" type="FlexOfferResponseType"/>
+	
     <xs:element name="X-FLEX-FlexOrder" type="X-FLEX-OrderType"/>
     <xs:element name="X-FLEX-FlexOrderResponse" type="X-FLEX-OrderResponseType"/>
 </xs:schema>
