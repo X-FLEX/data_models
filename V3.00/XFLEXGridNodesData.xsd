@@ -1,0 +1,265 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	
+
+	<!-- -->
+	<!-- Period Type -->
+	<!-- -->
+	<xs:simpleType name="PeriodType">
+		<xs:restriction base="xs:date"/>
+	</xs:simpleType>
+	
+	<!-- -->
+	<!-- Time Zone Name Type -->
+	<!-- -->
+	<xs:simpleType name="TimeZoneNameType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="(Africa|America|Australia|Europe|Pacific)/[a-zA-Z0-9_/]{3,}"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- -->
+	<!-- UUID Type -->
+	<!-- -->
+	<xs:simpleType name="UUIDType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}"/>
+		</xs:restriction>
+	</xs:simpleType>
+		
+	
+	<!-- -->
+	<!-- Node Type -->
+	<!-- only acceptable values are Device, Node, Feeder, and Transformer -->
+	<!-- -->
+	<xs:simpleType name="NodeType">
+		<xs:restriction base="xs:string">
+			<!-- <xs:pattern value="(Device | Node | Feeder | Transformer)"/> -->
+			<xs:enumeration value ="Device"/>
+			<xs:enumeration value ="Node"/>
+			<xs:enumeration value ="Feeder"/>
+			<xs:enumeration value ="Transformer"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<!-- -->
+	<!-- Grid Node Type -->
+	<!-- -->
+	<xs:complexType name="GridNodeType">
+		<xs:attributeGroup ref="GridNodeAttrGroup"/>
+	</xs:complexType>
+	<xs:attributeGroup name="GridNodeAttrGroup">
+		<xs:attribute name="NodeID" type="UUIDType" use="required">
+			<xs:annotation>
+				<xs:documentation>Unique ID of the Node in the grid.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="NodeType" type="NodeType" use="required">
+			<xs:annotation>
+				<xs:documentation>Grid node type. The only acceptable values are Device, Node, Feeder, and Transformer.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="NodeDescription" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>Description of the grid node.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:attributeGroup>
+		
+	
+	
+	<xs:element name="XFLEXGridNodesData" type="GridNodesDataType"/>
+
+	<xs:complexType name="GridNodesDataType">
+		
+		<xs:sequence>
+			<xs:element name="GridNode" type="GridNodeDataType" minOccurs="1" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>List of Grid nodes and.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+
+		<xs:attribute name="Sender" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					ID or domain of the origination of this message.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="TimeStamp" type="xs:dateTime" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					Date and time this message was created, including the time zone (ISO 8601 formatted as per
+					http://www.w3.org/TR/NOTE-datetime).
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		
+		<xs:attribute name="MessageID" type="UUIDType" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					Unique identifier (UUID/GUID as per IETF RFC 4122) for this message, to be generated when composing each
+					message.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="ISP-Duration" type="xs:duration" use="optional" default="PT15M">
+			<xs:annotation>
+				<xs:documentation>
+					ISO 8601 time interval (minutes only, for example PT15M) indicating the measurement interval in this message. Default value is set to PT15M.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		
+		<xs:attribute name="TimeZone" type="TimeZoneNameType" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					Time zone ID (as per the IANA time zone database, http://www.iana.org/time-zones, for example:
+					Europe/Amsterdam) indicating the UTC offset that applies to the Period referenced in this message. Although the
+					time zone is a market-wide fixed value, making this assumption explicit in each message is important for
+					validation purposes, allowing implementations to reject messages with an errant UTC offset.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Period" type="PeriodType" use="required">
+			<xs:annotation>
+				<xs:documentation>Day (in yyyy-mm-dd format) the TimeSeriesItems in this XFLEX* message belong to.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	
+	</xs:complexType>
+	
+	
+	
+	<!--
+		<xs:complexType name="GridNodeDataItemType">
+		
+		<xs:sequence>
+			<xs:element name="GridNode" type="GridNodeType">
+				<xs:annotation>
+					<xs:documentation>Unique ID of the Node in the grid.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+	<xs:sequence>
+			<xs:element name="TimeSeriesItem" type="TimeSeriesItemTypeNew" maxOccurs="unbounded" minOccurs="1"/>
+	</xs:sequence>
+		</xs:sequence>
+	</xs:complexType>
+	-->
+
+	<xs:complexType name="GridNodeDataType">
+		
+		
+		<xs:complexContent>
+            <xs:extension base="TimeSeriesType">
+				
+				<xs:attributeGroup ref="GridNodeAttrGroup"/>
+				
+				<xs:attribute name="Start" type="xs:positiveInteger" use="required">
+					<xs:annotation>
+						<xs:documentation>Number of the first ISP these measurements refer to. The first ISP of a day has number 1 and the last ISP of a day has number 96.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				
+				<xs:attribute name="Duration" type="xs:positiveInteger" use="optional" default="1">
+					<xs:annotation>
+						<xs:documentation>The number of the ISPs this element represents. Optional, default value is 1.</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				
+            </xs:extension>
+        </xs:complexContent>
+	</xs:complexType>
+
+
+
+	<!-- -->
+	<!-- Time Series TLS Item Type -->
+	<!-- -->
+	<xs:complexType name="TimeSeriesType">
+
+		<xs:sequence>
+			<xs:element name="Values" type="TimeSeriesItem" minOccurs="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+		
+	</xs:complexType>
+
+
+	
+	<!-- -->
+	<!-- Time Series Item Type -->
+	<!-- -->
+	<xs:complexType name="TimeSeriesItem">
+		
+		<xs:attribute name="DownwardCapacityLimit" type="xs:integer" use="required">
+			<xs:annotation>
+				<xs:documentation>Downward capacity limit for a particular time period.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="UpwardCapacityLimit" type="xs:integer" use="required">
+			<xs:annotation>
+				<xs:documentation>Upward capacity limit for a particular time period.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		
+		<xs:attribute name="TLS" type="TLSValueType" use="required">
+			<xs:annotation>
+				<xs:documentation>Traffic light signal value for a particular time period. Accepted values are red, yellow, and green.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		
+		<xs:attribute name="VoltageLimit" type="xs:decimal" use="optional">
+			<xs:annotation>
+				<xs:documentation>Voltage limit for a particular time period.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		
+		<xs:attribute name="CurrentLimit" type="xs:decimal" use="optional">
+			<xs:annotation>
+				<xs:documentation>Current limit for a particular time period.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+				
+		<xs:attribute name="Voltage" type="xs:decimal" use="optional">
+			<xs:annotation>
+				<xs:documentation>Voltage for a particular time period.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="Current" type="xs:decimal" use="optional">
+			<xs:annotation>
+				<xs:documentation>Voltage for a particular time period.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		
+		<xs:attribute name="Power" type="xs:decimal" use="optional">
+			<xs:annotation>
+				<xs:documentation>Power for a particular time period.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		
+		<xs:attribute name="PowerLosses" type="xs:decimal" use="optional">
+			<xs:annotation>
+				<xs:documentation>Power losses for a particular time period.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	
+	</xs:complexType>
+
+
+
+
+	<!--possible TLS values-->
+	<xs:simpleType name="TLSValueType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="red"/>
+			<xs:enumeration value="yellow"/>
+			<xs:enumeration value="green"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+</xs:schema>

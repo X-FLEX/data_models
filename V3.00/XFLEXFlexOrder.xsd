@@ -1,0 +1,284 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<!-- -->
+	<!-- Activation Factor Type -->
+	<!-- -->
+	<xs:simpleType name="ActivationFactorType">
+		<xs:restriction base="xs:decimal">
+			<xs:fractionDigits value="2"/>
+			<xs:minInclusive value="0.01"/>
+			<xs:maxInclusive value="1.00"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- -->
+	<!-- UUID Type -->
+	<!-- -->
+	<xs:simpleType name="UUIDType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+
+	<!-- -->
+	<!-- XFLEXOrder Direction Type-->
+	<!-- -->
+	<xs:simpleType name="XFLEXOrderDirectionType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="INJECTION"/>
+			<xs:enumeration value="CONSUMPTION"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- -->
+	<!-- Currency Amount Type -->
+	<!-- -->
+	<xs:simpleType name="CurrencyAmountType">
+		<xs:restriction base="xs:decimal">
+			<xs:fractionDigits value="4"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- -->
+	<!-- ISO-4217 Currency Type -->
+	<!-- -->
+	<xs:simpleType name="ISO4217CurrencyType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[A-Z]{3}"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- -->
+	<!-- Time Zone Name Type -->
+	<!-- -->
+	<xs:simpleType name="TimeZoneNameType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="(Africa|America|Australia|Europe|Pacific)/[a-zA-Z0-9_/]{3,}"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- -->
+	<!-- Period Type -->
+	<!-- -->
+	<xs:simpleType name="PeriodType">
+		<xs:restriction base="xs:date"/>
+	</xs:simpleType>
+
+	<!-- -->
+	<!-- Grid Node Type -->
+	<!-- -->
+	<xs:complexType name="GridNodeType">
+		<xs:attributeGroup ref="GridNodeAttrGroup"/>
+	</xs:complexType>
+	<xs:attributeGroup name="GridNodeAttrGroup">
+		<xs:attribute name="NodeID" type="UUIDType" use="required">
+			<xs:annotation>
+				<xs:documentation>Unique ID of the Node in the grid.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="NodeType" type="NodeType" use="required">
+			<xs:annotation>
+				<xs:documentation>Grid node type. The only acceptable values are Device, Node, Feeder, and Transformer.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="NodeDescription" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>Description of the grid node.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:attributeGroup>
+
+	<!-- -->
+	<!-- Node Type -->
+	<!-- only acceptable values are Device, Node, Feeder, and Transformer -->
+	<!-- -->
+	<xs:simpleType name="NodeType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value ="Device"/>
+			<xs:enumeration value ="Node"/>
+			<xs:enumeration value ="Feeder"/>
+			<xs:enumeration value ="Transformer"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	
+	<!-- -->
+	<!-- X-FLEX Flex Order Option ISP Type  -->
+	<!-- -->
+	<xs:complexType name="XFLEXFlexOrderOptionISPType">
+
+		<xs:attribute name="OrderDirection" type="XFLEXOrderDirectionType" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					Direction of the power in the XFLEXFlexOrder.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="ActivationFactor" type="ActivationFactorType" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					The activation factor for the order within ISP.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="OfferReference" type="UUIDType" use="required">
+			<xs:annotation>
+				<xs:documentation>The identification of the OfferOption chosen from the XFLEXFlexOffer.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="Price" type="CurrencyAmountType" use="required">
+			<xs:annotation>
+				<xs:documentation>The asking price for the flexibility offered in this option.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="Power" type="xs:positiveInteger" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					Power specified for this ISP in Watts.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="Start" type="xs:positiveInteger" use="required">
+			<xs:annotation>
+				<xs:documentation>Number of the first ISPs this element refers to. The first ISP of a day has number 1 and the last ISP of a day has number 96.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="Duration" type="xs:positiveInteger" use="optional" default="1">
+			<xs:annotation>
+				<xs:documentation>The number of the ISPs this element represents. Optional, default value is 1.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+	<!-- -->
+	<!-- X-FLEX Flex Order Type -->
+	<!-- -->
+	<xs:complexType name="XFLEXFlexOrderType">
+
+
+
+		<xs:sequence>
+			<xs:annotation>
+				<xs:documentation>
+					The ISP represents one or more Imbalance Settlement Periods and is used by Prognosis and Flex-related
+					messages.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:element name="ISP" type="XFLEXFlexOrderOptionISPType" minOccurs ="1" maxOccurs="unbounded"/>
+		</xs:sequence>
+
+		<xs:attribute name="Sender" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					ID or domain of the sender.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+
+		<xs:attribute name="Recipient" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					ID or domain of the recipient.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+
+
+
+		<xs:attribute name="TimeStamp" type="xs:dateTime" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					Date and time this message was created, including the time zone (ISO 8601 formatted as per
+					http://www.w3.org/TR/NOTE-datetime).
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+
+		<xs:attribute name="MessageID" type="UUIDType" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					Unique identifier (UUID/GUID as per IETF RFC 4122) for this message, to be generated when composing each
+					message.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+
+		<xs:attribute name="ConversationID" type="UUIDType" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					Unique identifier (UUID/GUID as per IETF RFC 4122) used to correlate responses with requests, to be
+					generated when composing the first message in a conversation and subsequently copied from the original message to each
+					reply message.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="ISP-Duration" type="xs:duration" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					ISO 8601 time interval (minutes only, for example PT15M) indicating the duration of the ISPs
+					referenced in this message. Although the ISP length is a market-wide fixed value, making this assumption
+					explicit in each message is important for validation purposes, allowing implementations to reject messages with
+					an errant ISP duration.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="TimeZone" type="TimeZoneNameType" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					Time zone ID (as per the IANA time zone database, http://www.iana.org/time-zones, for example:
+					Europe/Amsterdam) indicating the UTC offset that applies to the Period referenced in this message. Although the
+					time zone is a market-wide fixed value, making this assumption explicit in each message is important for
+					validation purposes, allowing implementations to reject messages with an errant UTC offset.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="Period" type="PeriodType" use="required">
+			<xs:annotation>
+				<xs:documentation>Day (in yyyy-mm-dd format) the ISPs referenced in this Flex* message belong to.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attributeGroup ref="GridNodeAttrGroup"/>
+
+
+		<xs:attribute name="Currency" type="ISO4217CurrencyType" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					ISO 4217 code indicating the currency that applies to the price of the FlexOffer.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+
+		<xs:attribute name="XFLEXFlexOfferMessageID" type="UUIDType" use="required">
+			<xs:annotation>
+				<xs:documentation>The identification of the XFLEXFlexOffer, i.e. UUID of the XFLEXFlexOffer.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="OrderReference" type="UUIDType" use="required">
+			<xs:annotation>
+				<xs:documentation>The identification of this order, i.e. UUID generated by the MARKETFLEX tool.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+
+
+
+	</xs:complexType>
+
+	<xs:element name="XFLEXFlexOrder" type="XFLEXFlexOrderType"/>
+</xs:schema>
