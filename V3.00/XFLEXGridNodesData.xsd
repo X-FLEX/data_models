@@ -1,73 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
-	
+	<xs:include schemaLocation="CommonTypes.xsd"/>
 
-	<!-- -->
-	<!-- Period Type -->
-	<!-- -->
-	<xs:simpleType name="PeriodType">
-		<xs:restriction base="xs:date"/>
-	</xs:simpleType>
-	
-	<!-- -->
-	<!-- Time Zone Name Type -->
-	<!-- -->
-	<xs:simpleType name="TimeZoneNameType">
-		<xs:restriction base="xs:string">
-			<xs:pattern value="(Africa|America|Australia|Europe|Pacific)/[a-zA-Z0-9_/]{3,}"/>
-		</xs:restriction>
-	</xs:simpleType>
-
-	<!-- -->
-	<!-- UUID Type -->
-	<!-- -->
-	<xs:simpleType name="UUIDType">
-		<xs:restriction base="xs:string">
-			<xs:pattern value="[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}"/>
-		</xs:restriction>
-	</xs:simpleType>
-		
-	
-	<!-- -->
-	<!-- Node Type -->
-	<!-- only acceptable values are Device, Node, Feeder, and Transformer -->
-	<!-- -->
-	<xs:simpleType name="NodeType">
-		<xs:restriction base="xs:string">
-			<!-- <xs:pattern value="(Device | Node | Feeder | Transformer)"/> -->
-			<xs:enumeration value ="Device"/>
-			<xs:enumeration value ="Node"/>
-			<xs:enumeration value ="Feeder"/>
-			<xs:enumeration value ="Transformer"/>
-		</xs:restriction>
-	</xs:simpleType>
-	
-	<!-- -->
-	<!-- Grid Node Type -->
-	<!-- -->
-	<xs:complexType name="GridNodeType">
-		<xs:attributeGroup ref="GridNodeAttrGroup"/>
-	</xs:complexType>
-	<xs:attributeGroup name="GridNodeAttrGroup">
-		<xs:attribute name="NodeID" type="UUIDType" use="required">
-			<xs:annotation>
-				<xs:documentation>Unique ID of the Node in the grid.</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>
-		<xs:attribute name="NodeType" type="NodeType" use="required">
-			<xs:annotation>
-				<xs:documentation>Grid node type. The only acceptable values are Device, Node, Feeder, and Transformer.</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>
-		<xs:attribute name="NodeDescription" type="xs:string" use="optional">
-			<xs:annotation>
-				<xs:documentation>Description of the grid node.</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>
-	</xs:attributeGroup>
-		
-	
-	
 	<xs:element name="XFLEXGridNodesData" type="GridNodesDataType"/>
 
 	<xs:complexType name="GridNodesDataType">
@@ -75,7 +9,7 @@
 		<xs:sequence>
 			<xs:element name="GridNode" type="GridNodeDataType" minOccurs="1" maxOccurs="unbounded">
 				<xs:annotation>
-					<xs:documentation>List of Grid nodes and.</xs:documentation>
+					<xs:documentation>List of Grid nodes.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 		</xs:sequence>
@@ -88,6 +22,14 @@
 			</xs:annotation>
 		</xs:attribute>
 
+		<xs:attribute name="Recipient" type="MarketLocationType" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					Market location.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		
 		<xs:attribute name="TimeStamp" type="xs:dateTime" use="required">
 			<xs:annotation>
 				<xs:documentation>
@@ -133,26 +75,8 @@
 	</xs:complexType>
 	
 	
-	
-	<!--
-		<xs:complexType name="GridNodeDataItemType">
-		
-		<xs:sequence>
-			<xs:element name="GridNode" type="GridNodeType">
-				<xs:annotation>
-					<xs:documentation>Unique ID of the Node in the grid.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-	<xs:sequence>
-			<xs:element name="TimeSeriesItem" type="TimeSeriesItemTypeNew" maxOccurs="unbounded" minOccurs="1"/>
-	</xs:sequence>
-		</xs:sequence>
-	</xs:complexType>
-	-->
 
 	<xs:complexType name="GridNodeDataType">
-		
-		
 		<xs:complexContent>
             <xs:extension base="TimeSeriesType">
 				
@@ -194,57 +118,57 @@
 	<!-- -->
 	<xs:complexType name="TimeSeriesItem">
 		
-		<xs:attribute name="DownwardCapacityLimit" type="xs:integer" use="required">
+		<xs:attribute name="DownwardCapacityLimit" type="xs:decimal" use="required">
 			<xs:annotation>
-				<xs:documentation>Downward capacity limit for a particular time period.</xs:documentation>
+				<xs:documentation>Downward capacity limit (in kW) for a particular time period.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
 
-		<xs:attribute name="UpwardCapacityLimit" type="xs:integer" use="required">
+		<xs:attribute name="UpwardCapacityLimit" type="xs:decimal" use="required">
 			<xs:annotation>
-				<xs:documentation>Upward capacity limit for a particular time period.</xs:documentation>
+				<xs:documentation>Upward capacity limit (in kW) for a particular time period.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
 		
 		<xs:attribute name="TLS" type="TLSValueType" use="required">
 			<xs:annotation>
-				<xs:documentation>Traffic light signal value for a particular time period. Accepted values are red, yellow, and green.</xs:documentation>
+				<xs:documentation>Traffic light signal value for a particular time period. Accepted values are red, yellow, none, and green.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
 		
 		<xs:attribute name="VoltageLimit" type="xs:decimal" use="optional">
 			<xs:annotation>
-				<xs:documentation>Voltage limit for a particular time period.</xs:documentation>
+				<xs:documentation>Voltage limit (pu) for a particular time period.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
 		
 		<xs:attribute name="CurrentLimit" type="xs:decimal" use="optional">
 			<xs:annotation>
-				<xs:documentation>Current limit for a particular time period.</xs:documentation>
+				<xs:documentation>Current limit (A) for a particular time period.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
 				
 		<xs:attribute name="Voltage" type="xs:decimal" use="optional">
 			<xs:annotation>
-				<xs:documentation>Voltage for a particular time period.</xs:documentation>
+				<xs:documentation>Voltage (pu) for a particular time period.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
 
 		<xs:attribute name="Current" type="xs:decimal" use="optional">
 			<xs:annotation>
-				<xs:documentation>Voltage for a particular time period.</xs:documentation>
+				<xs:documentation>Current (A) for a particular time period.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
 		
 		<xs:attribute name="Power" type="xs:decimal" use="optional">
 			<xs:annotation>
-				<xs:documentation>Power for a particular time period.</xs:documentation>
+				<xs:documentation>Power (kW) for a particular time period.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
 		
 		<xs:attribute name="PowerLosses" type="xs:decimal" use="optional">
 			<xs:annotation>
-				<xs:documentation>Power losses for a particular time period.</xs:documentation>
+				<xs:documentation>Power losses (kWh) for a particular time period.</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>
 	
@@ -259,6 +183,7 @@
 			<xs:enumeration value="red"/>
 			<xs:enumeration value="yellow"/>
 			<xs:enumeration value="green"/>
+			<xs:enumeration value="none"/>
 		</xs:restriction>
 	</xs:simpleType>
 

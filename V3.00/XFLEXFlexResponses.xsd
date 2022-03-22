@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="CommonTypes.xsd"/>
+
+
+	<xs:element name="XFLEXFlexRequestResponse" type="XFLEXMarketFlexResponseType"/>
+	<xs:element name="XFLEXFlexOfferResponse" type="XFLEXMarketFlexResponseType"/>
+	<xs:element name="XFLEXFlexOfferRevocationResponse" type="XFLEXMarketFlexResponseType"/>
+	<xs:element name="XFLEXFlexOrderResponse" type="XFLEXOrderResponseType"/>
+	
+	<!-- -->
+	<!-- XFLEX MARKETFLEX Response Type -->
+	<!-- -->
+	<xs:complexType name="XFLEXMarketFlexResponseType">
+		<xs:complexContent>
+			<xs:extension base="XFLEXPayloadResponseType">
+				<xs:attribute name="Sender" type="MarketDomainType" use="required">
+					<xs:annotation>
+						<xs:documentation>
+							Market type / Market domain.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="Recipient" type="xs:string" use="required">
+					<xs:annotation>
+						<xs:documentation>
+							ID or domain of the recipient.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- -->
+	<!-- XFLEX Order Response Type -->
+	<!-- -->
+	<xs:complexType name="XFLEXOrderResponseType">
+		<xs:complexContent>
+			<xs:extension base="XFLEXPayloadResponseType">
+				<xs:attribute name="Sender" type="xs:string" use="required">
+					<xs:annotation>
+						<xs:documentation>
+							Market type / Market domain.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="Recipient" type="xs:string" use="required">
+					<xs:annotation>
+						<xs:documentation>
+							ID or domain of the recipient.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	
+	
+
+
+	<!-- -->
+	<!-- XFLEX Flex Response Payload Type -->
+	<!-- -->
+
+	<xs:complexType name="XFLEXPayloadResponseType">
+
+		<xs:attribute name="TimeStamp" type="xs:dateTime" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					Date and time this message was created, including the time zone (ISO 8601 formatted as per
+					http://www.w3.org/TR/NOTE-datetime).
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="MessageID" type="UUIDType" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					Unique identifier (UUID/GUID as per IETF RFC 4122) for this message, to be generated when composing each
+					message.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="ConversationID" type="UUIDType" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					Unique identifier (UUID/GUID as per IETF RFC 4122) used to correlate responses with requests, to be
+					generated when composing the first message in a conversation and subsequently copied from the original message to each
+					reply message.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="Result" type="AcceptedRejectedType" use="required">
+			<xs:annotation>
+				<xs:documentation>Indication whether the query was executed successfully or failed.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="RejectionReason" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>
+					In case the query failed, this attribute must contain a human-readable description of the failure
+					reason.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="AcceptedPower" type="xs:decimal" use="optional">
+			<xs:annotation>
+				<xs:documentation>The amount of power accepted (only) in the case of divisible bid.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="XFLEXMessageID" type="UUIDType" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					MessageID of the XFLEXFlex message this response is based on, i.e., XFLEXFlexRequest,
+					XFLEXFlexOffer, XFLEXFlexOrder, or XFLEXFlexOfferRevocation.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+
+	</xs:complexType>
+	
+
+</xs:schema>

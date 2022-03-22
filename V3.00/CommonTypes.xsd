@@ -1,0 +1,182 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	
+	<!-- -->
+	<!-- UUID Type -->
+	<!-- -->
+	<xs:simpleType name="UUIDType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- -->
+	<!--  Accepted or Rejected Type (for response messages)-->
+	<!-- -->
+	<xs:simpleType name="AcceptedRejectedType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Accepted"/>
+			<xs:enumeration value="Rejected"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- -->
+	<!--  Market Locations-->
+	<!-- -->
+	<xs:simpleType name="MarketLocationType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="luce"/>
+			<xs:enumeration value="xanthi"/>
+			<xs:enumeration value="ravne"/>
+			<xs:enumeration value="albena"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- -->
+	<!-- Node Type -->
+	<!-- only acceptable values are Device, Node, Feeder, and Transformer -->
+	<!-- -->
+	<xs:simpleType name="NodeType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value ="Device"/>
+			<xs:enumeration value ="Node"/>
+			<xs:enumeration value ="Feeder"/>
+			<xs:enumeration value ="Transformer"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- -->
+	<!-- Grid Node Type -->
+	<!-- -->
+	<xs:complexType name="GridNodeType">
+		<xs:attributeGroup ref="GridNodeAttrGroup"/>
+	</xs:complexType>
+	<xs:attributeGroup name="GridNodeAttrGroup">
+		<xs:attribute name="NodeID" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>Unique ID of the Node in the grid.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="NodeType" type="NodeType" use="required">
+			<xs:annotation>
+				<xs:documentation>Grid node type. The only acceptable values are Device, Node, Feeder, and Transformer.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="NodeDescription" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>Description of the grid node.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:attributeGroup>
+
+	<!-- -->
+	<!-- XFLEXOrder Direction Type-->
+	<!-- -->
+	<xs:simpleType name="OrderDirectionType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="INJECTION"/>
+			<xs:enumeration value="CONSUMPTION"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<!-- -->
+	<!-- Period Type -->
+	<!-- -->
+	<xs:simpleType name="PeriodType">
+		<xs:restriction base="xs:date"/>
+	</xs:simpleType>
+
+	<!-- -->
+	<!-- Time Zone Name Type -->
+	<!-- -->
+	<xs:simpleType name="TimeZoneNameType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="(Africa|America|Australia|Europe|Pacific)/[a-zA-Z0-9_/]{3,}"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- -->
+	<!-- Market type and Market locations -->
+	<!-- -->
+	<xs:simpleType name="MarketDomainType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="DAM/luce"/>
+			<xs:enumeration value="DAM/xanthi"/>
+			<xs:enumeration value="DAM/ravne"/>
+			<xs:enumeration value="DAM/albena"/>
+			<xs:enumeration value="IDM/luce"/>
+			<xs:enumeration value="IDM/xanthi"/>
+			<xs:enumeration value="IDM/ravne"/>
+			<xs:enumeration value="IDM/albena"/>
+			<xs:enumeration value="AS/luce"/>
+			<xs:enumeration value="AS/xanthi"/>
+			<xs:enumeration value="AS/ravne"/>
+			<xs:enumeration value="AS/albena"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	
+		<!-- -->
+	<!-- XFLEXOrderType Type -->
+	<!-- -->
+	<xs:simpleType name="XFLEXOrderExecutionType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="REGULAR_LIMIT_ORDER"/>
+			<xs:enumeration value="ALL OR NONE"/>
+			<xs:enumeration value="FILL OR KILL"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<!-- -->
+	<!-- Activation Factor Type -->
+	<!-- -->
+	<xs:simpleType name="ActivationFactorType">
+		<xs:restriction base="xs:decimal">
+			<xs:fractionDigits value="2"/>
+			<xs:minInclusive value="0.01"/>
+			<xs:maxInclusive value="1.00"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- -->
+	<!-- XFLEXOrder Direction Type-->
+	<!-- -->
+	<xs:simpleType name="XFLEXOrderDirectionType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="INJECTION"/>
+			<xs:enumeration value="CONSUMPTION"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- -->
+	<!-- Currency Amount Type -->
+	<!-- -->
+	<xs:simpleType name="CurrencyAmountType">
+		<xs:restriction base="xs:decimal">
+			<xs:fractionDigits value="4"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- -->
+	<!-- ISO-4217 Currency Type -->
+	<!-- -->
+	<xs:simpleType name="ISO4217CurrencyType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[A-Z]{3}"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+
+	<!-- -->
+	<!-- ProcurementType Type -->
+	<!-- -->
+	<xs:simpleType name="ProcurementTypeType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NEW"/>
+			<xs:enumeration value="TRADED"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+
+
+</xs:schema>

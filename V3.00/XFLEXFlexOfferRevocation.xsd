@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="CommonTypes.xsd"/>
+
+
+	<xs:complexType name="XFLEXFlexOfferRevocationType">
+
+		<xs:attribute name="Sender" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					ID or domain of the sender.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="Recipient" type="MarketDomainType" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					Market type / Market Location.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="TimeStamp" type="xs:dateTime" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					Date and time this message was created, including the time zone (ISO 8601 formatted as per
+					http://www.w3.org/TR/NOTE-datetime).
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="MessageID" type="UUIDType" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					Unique identifier (UUID/GUID as per IETF RFC 4122) for this message, to be generated when composing each
+					message.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="ConversationID" type="UUIDType" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					Unique identifier (UUID/GUID as per IETF RFC 4122) used to correlate responses with requests, to be
+					generated when composing the first message in a conversation and subsequently copied from the original message to each
+					reply message.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+
+		<xs:attribute name="XFLEXFlexOfferMessageID" type="UUIDType" use="required">
+			<xs:annotation>
+				<xs:documentation>The identification of the XFLEXFlexOffer, i.e., UUID of the XFLEXFlexOffer.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		
+
+	</xs:complexType>
+
+	<xs:element name="XFLEXFlexOfferRevocation" type="XFLEXFlexOfferRevocationType"/>
+	
+</xs:schema>
