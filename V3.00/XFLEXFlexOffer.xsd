@@ -145,7 +145,7 @@
 		<xs:attribute name="Power" type="xs:decimal" use="required">
 			<xs:annotation>
 				<xs:documentation>
-					Power specified for this ISP in Watts.
+					Power specified for this ISP in kiloWatts.
 				</xs:documentation>
 			</xs:annotation>
 		</xs:attribute>

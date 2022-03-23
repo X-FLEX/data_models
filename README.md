@@ -31,7 +31,9 @@ by the [USEF Foundation](https://www.usef.energy/).
 - [XFLEXFlexRequest](https://github.com/X-FLEX/data_models/blob/main/V3.00/XFLEXFlexRequest.xsd) is an extension of the FlexRequest messsage.
 - [XFLEXFlexOffer](https://github.com/X-FLEX/data_models/blob/main/V3.00/XFLEXFlexOffer.xsd) is an extension of the FlexOffer messsage. 
 - [XFLEXFlexOrder](https://github.com/X-FLEX/data_models/blob/main/V3.00/XFLEXFlexOrder.xsd) is an extension of the FlexOrder messsage. 
-- [XFLEXGridNodesData](https://github.com/X-FLEX/data_models/blob/main/V3.00/XFLEXGridNodesData.xsd) is used for sending grid conditions. 
+- [XFLEXGridNodesData](https://github.com/X-FLEX/data_models/blob/main/V3.00/XFLEXGridNodesData.xsd) is used for sending grid conditions.
+- [XFLEXFlexOfferRevocation](https://github.com/X-FLEX/data_models/blob/main/V3.00/XFLEXFlexOffer.xsd) is an extension of the FlexOfferRevocation messsage.  
+- [XFLEXFlexResponses](https://github.com/X-FLEX/data_models/blob/main/V3.00/XFLEXFlexOffer.xsd) includes response messsages. 
 
 
 

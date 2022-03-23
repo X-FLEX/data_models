@@ -101,7 +101,7 @@
 
 
 	<!-- -->
-	<!-- Time Series TLS Item Type -->
+	<!-- Time Series Type-->
 	<!-- -->
 	<xs:complexType name="TimeSeriesType">
 
@@ -114,7 +114,7 @@
 
 	
 	<!-- -->
-	<!-- Time Series Item Type -->
+	<!-- Time Series Item -->
 	<!-- -->
 	<xs:complexType name="TimeSeriesItem">
 		

@@ -68,16 +68,6 @@
 			</xs:annotation>
 		</xs:attribute>
 	</xs:attributeGroup>
-
-	<!-- -->
-	<!-- XFLEXOrder Direction Type-->
-	<!-- -->
-	<xs:simpleType name="OrderDirectionType">
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="INJECTION"/>
-			<xs:enumeration value="CONSUMPTION"/>
-		</xs:restriction>
-	</xs:simpleType>
 	
 	<!-- -->
 	<!-- Period Type -->
@@ -101,7 +91,6 @@
 	<xs:simpleType name="MarketDomainType">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="DAM/luce"/>
-			<xs:enumeration value="DAM/xanthi"/>
 			<xs:enumeration value="DAM/ravne"/>
 			<xs:enumeration value="DAM/albena"/>
 			<xs:enumeration value="IDM/luce"/>

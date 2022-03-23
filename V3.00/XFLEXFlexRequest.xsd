@@ -8,7 +8,7 @@
 	<!-- X-FLEX Flex Request Option ISP Type  -->
 	<!-- -->
 	<xs:complexType name="XFLEXFlexRequestOptionISPType">
-		<xs:attribute name="OrderDirection" type="OrderDirectionType" use="required">
+		<xs:attribute name="OrderDirection" type="XFLEXOrderDirectionType" use="required">
 			<xs:annotation>
 				<xs:documentation>
 					Direction of the power in the XFLEXFlexRequest.
